@@ -2,10 +2,15 @@ import { useState } from "react"
 import Header from "./Header"
 import * as Yup from "yup";
 import { useFormik } from "formik";
+import { createUserWithEmailAndPassword,signInWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { auth } from "../utils/firebase";
+import { useDispatch } from "react-redux";
+import { addUser } from "../utils/userSlice";
 
 const Login = () => {
   const [isSignIn,setIsSignIn] = useState(true);
-
+  const [errorMsg,setErrorMsg] = useState(null);
+  const dispatch = useDispatch();
   const validationSchema = Yup.object({
     name: isSignIn ? Yup.string() : Yup.string().min(3,"Name must be at least 3 Character"),
     email: Yup.string().email("Invalid Email format").required("Email is required"),
@@ -21,9 +26,9 @@ const Login = () => {
     validationSchema: validationSchema,
     onSubmit: (values) => {
       if(isSignIn){
-        console.log("ldksd",values);
+        handleSignIn(values.email,values.password);
       }else{
-        console.log("ldksd",values);
+        handleSignUp(values.name,values.email,values.password);
       }
     }
   })
@@ -31,6 +36,45 @@ const Login = () => {
     setIsSignIn(!isSignIn);
     formik.resetForm();
   }
+
+  function handleSignUp(name,email,password){
+    createUserWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      // Signed up 
+      const user = userCredential.user;
+      console.log(user);
+      updateProfile(user, {
+        displayName: name, photoURL: "https://example.com/jane-q-user/profile.jpg"
+      }).then(() => {
+        const {uid,email,displayName} = auth.currentUser;
+        dispatch(addUser({uid,email,displayName}));
+      }).catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        setErrorMsg(errorCode + " - " + errorMessage);
+      });
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      setErrorMsg(errorCode + " - " + errorMessage);
+    });
+  }
+
+  function handleSignIn(email,password){
+    signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      // Signed up 
+      const user = userCredential.user;
+      console.log(user);
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      setErrorMsg(errorCode + " - " + errorMessage);
+    });
+  }
+
   return (
     <div className="relative bg-black h-[100vh] z-0">
         <div className="image-bg">
@@ -80,6 +124,9 @@ const Login = () => {
            {formik.touched.password && formik.errors.password && (
               <div className="text-red-500 text-sm">{formik.errors.password}</div>
             )}
+            {errorMsg && errorMsg?.length > 0 ? 
+              <div className="text-red-500 text-sm">{errorMsg}</div>
+            : null}
           <button type="submit" className="bg-red-600 rounded-sm py-2 px-2 text-lg">
             { isSignIn ? "Sign In" : "Sign Up"}
           </button>
