@@ -125,7 +125,7 @@ const Login = () => {
             {errorMsg && errorMsg?.length > 0 ? 
               <div className="text-red-500 text-sm">{errorMsg}</div>
             : null}
-          <button type="submit" className="bg-red-600 rounded-sm py-2 px-2 text-lg">
+          <button type="submit" className="bg-red-600 rounded-sm py-2 px-2 text-lg cursor-pointer">
             { isSignIn ? "Sign In" : "Sign Up"}
           </button>
           <span className="text-gray-300 cursor-pointer" onClick={toggleSignInForm}>{isSignIn ? "New To Inflix?" : "Already a user?" }<span className="font-bold">{isSignIn ? " Sign Up Now" : " Sign In Now"}</span></span>

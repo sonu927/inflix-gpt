@@ -3,12 +3,13 @@ import InflixGptLogo from "./InflixGptLogo"
 import { auth } from "../utils/firebase";
 import { useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { addUser, removeUser } from "../utils/userSlice";
 
 const Header = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [isScrolled,setIsScrolled] = useState(false);
   const user = useSelector((store) => store.user);
   const handleSignOut = () => {
     signOut(auth).then(() => {
@@ -29,13 +30,29 @@ const Header = () => {
     });
     return () => unsubscribe();
   },[])
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if(window.scrollY > 50){
+        setIsScrolled(true);
+      }else{
+        setIsScrolled(false);
+      }
+    }
+    window.addEventListener('scroll',handleScroll);
+    return () => {window.removeEventListener('scroll',handleScroll)}
+  },[])
   return (
-    <div className="absolute px-[8%] flex justify-between items-center bg-linear-to-b/increasing from-black w-[100%] z-50">
+    <div className={`fixed px-[8%] flex justify-between items-center w-[100%] z-50 ${isScrolled ? "bg-black shadow-md" : "bg-linear-to-b/increasing from-black" }`}>
         <InflixGptLogo />
         {user && 
           <div className="flex items-center rounded-sm text-white">
-              <span className="p-2 bg-gray-800 align-middle rounded-tl-sm rounded-bl-sm border-r-3 border-white">{user?.displayName}</span>
-              <span className="ri-logout-box-r-line text-2xl bg-gray-800 text-white p-2 rounded-tr-sm rounded-br-sm leading-none" onClick={handleSignOut}></span>
+              <div className="flex items-center gap-1 p-2 align-middle rounded-tl-sm rounded-bl-sm">
+                <span className="ri-user-6-fill text-xl"></span>
+                <span className="text-ls">{user?.displayName}</span>
+              </div>
+              <div className="h-[40px] bg-gradient-to-b from-transparent via-white to-transparent w-[1.5px] rounded-full"></div>
+              <span className="ri-logout-box-r-line text-2xl text-white p-2 rounded-tr-sm rounded-br-sm leading-none" onClick={handleSignOut}></span>
           </div>
         }
     </div>
