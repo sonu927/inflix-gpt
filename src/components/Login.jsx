@@ -77,12 +77,10 @@ const Login = () => {
 
   return (
     <div className="relative bg-black h-[100vh] z-0">
+        <Header />
         <div className="image-bg">
         </div>
-        
-        <Header />
-
-        <form onSubmit={formik.handleSubmit} className="bg-black/70 text-white mx-auto mt-[6%] p-10 w-3/12 flex flex-col gap-4">
+        <form onSubmit={formik.handleSubmit} className="bg-black/70 text-white mx-auto absolute left-[40%] top-[25%] p-10 w-3/12 flex flex-col gap-4">
           <h1 className="text-3xl font-bold">{isSignIn ?"Sign In" : "Sign Up"}</h1>
           {!isSignIn && 
             <>

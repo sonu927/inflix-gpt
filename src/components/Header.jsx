@@ -30,7 +30,7 @@ const Header = () => {
     return () => unsubscribe();
   },[])
   return (
-    <div className="px-[8%] flex justify-between items-center bg-linear-to-b/increasing from-black ">
+    <div className="absolute px-[8%] flex justify-between items-center bg-linear-to-b/increasing from-black w-[100%] z-50">
         <InflixGptLogo />
         {user && 
           <div className="flex items-center rounded-sm text-white">
