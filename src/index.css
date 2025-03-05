@@ -1,21 +1,54 @@
 @import "tailwindcss";
 
 
-.image-bg{
-    background: url("https://assets.nflxext.com/ffe/siteui/vlv3/fb5cb900-0cb6-4728-beb5-579b9af98fdd/web/IN-en-20250127-TRIFECTA-perspective_cf66f5a3-d894-4185-9106-5f45502fc387_large.jpg");
-    height: 100vh;
-    width: 100%;
-    opacity: 0.5;
-    z-index: -1;
-    position: absolute;
-    background-size: cover;
+@keyframes fullSpin{
+  100% {
+    transform: rotate(-360deg);
+  }
 }
 
-.scrollbar-hide::-webkit-scrollbar {
-    display: none;
+@property --angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false
+}
+
+@layer utilities{
+
+  .image-bg{
+      background: url("https://assets.nflxext.com/ffe/siteui/vlv3/fb5cb900-0cb6-4728-beb5-579b9af98fdd/web/IN-en-20250127-TRIFECTA-perspective_cf66f5a3-d894-4185-9106-5f45502fc387_large.jpg");
+      height: 100vh;
+      width: 100%;
+      opacity: 0.5;
+      z-index: -1;
+      position: absolute;
+      background-size: cover;
   }
   
-.scrollbar-hide {
--ms-overflow-style: none;
-scrollbar-width: none;
+  .scrollbar-hide::-webkit-scrollbar {
+      display: none;
+    }
+    
+  .scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  }
+
+  .box::before{
+    animation: fullSpin 1.5s linear infinite;
+  }
+  
+  .box::before{
+    @apply content-[''] absolute bg-[conic-gradient(#FFFFFF_20deg,transparent_120deg)] w-[200px] h-[200px] top-[-75%] left-[-15%] rounded-[inherit] z-[-2]
+  }
+
+  .bg-animation:after {
+    content: "";
+    --angle: 0deg;
+    border-radius: 0.6rem;
+    @apply absolute inset-0 z-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500
+  }
+  
 }
+
+
