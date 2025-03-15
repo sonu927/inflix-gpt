@@ -80,7 +80,7 @@ const Login = () => {
         <Header />
         <div className="image-bg">
         </div>
-        <form onSubmit={formik.handleSubmit} className="bg-black/70 text-white mx-auto absolute left-[40%] top-[25%] p-10 w-3/12 flex flex-col gap-4">
+        <form onSubmit={formik.handleSubmit} className="bg-black/70 text-white md:mx-auto absolute left-[12%] md:left-[40%] top-[25%] p-10 w-9/12 md:w-3/12 flex flex-col gap-4">
           <h1 className="text-3xl font-bold">{isSignIn ?"Sign In" : "Sign Up"}</h1>
           {!isSignIn && 
             <>

@@ -8,7 +8,7 @@ const MainContainer = () => {
   const randomIndex = Math.floor(Math.random() * movies.length);
   const {id,original_title,overview} = movies[randomIndex]
   return (
-    <div className='bg-gradient-to-r from-black'>
+    <div className='bg-black bg-gradient-to-r from-black pt-[10%] md:pt-0'>
         <VideoTitle title={original_title} overview={overview} />
         <VideoBackground movieId={id} />
     </div>

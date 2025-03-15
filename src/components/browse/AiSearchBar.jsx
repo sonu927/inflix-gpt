@@ -89,7 +89,7 @@ const AiSearchBar = ({setLoading}) => {
     
     return (
         <div className='py-12 flex justify-center items-center'>
-            <div className='py-6 px-4 bg-custom-dark w-[50%] rounded-lg flex flex-col gap-1 text-white'>
+            <div className='py-6 px-4 bg-custom-dark w-[95%] md:w-[50%] rounded-lg flex flex-col gap-1 text-white'>
                 <textarea
                 ref={searchText}
                 placeholder="What are you looking for?"
