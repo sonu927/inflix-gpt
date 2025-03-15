@@ -18,3 +18,7 @@ Inflix-GPT is an AI-powered movie discovery platform that provides real-time tre
 - **State Management:** Redux Store
 - **API Handling:** Promise-based API calls
 
+![image](https://github.com/user-attachments/assets/54e47381-a791-44b8-9f5d-ca8b7eb22cd4)
+![image](https://github.com/user-attachments/assets/40821cad-4d03-4ef5-99d4-cad085fd6de5)
+![image](https://github.com/user-attachments/assets/45c4a551-9932-41c2-8dd9-3ddd01534357)
+
