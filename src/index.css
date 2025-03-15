@@ -49,6 +49,9 @@
     @apply absolute inset-0 z-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500
   }
   
+  .bg-custom-dark {
+    background-color: rgba(23, 23, 23, 0.95); /* Equivalent to bg-[#171717]/95 */
+  }
 }
 
 

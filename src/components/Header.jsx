@@ -12,6 +12,7 @@ const Header = () => {
   const dispatch = useDispatch();
   const [isScrolled,setIsScrolled] = useState(false);
   const user = useSelector((store) => store.user);
+  const showAiSearch = useSelector((store) => store.ai.showSearchPage);
   const handleSignOut = () => {
     signOut(auth).then(() => {
     }).catch((error) => {
@@ -54,8 +55,17 @@ const Header = () => {
           <div className="flex gap-2">
             <div className="box relative w-[140px] h-[48px] flex justify-center items-center text-white rounded-md overflow-hidden cursor-pointer" onClick={handleSearchClick}>
               <div className=" bg-black w-[90%] py-2 px-2 rounded-md text-center">
-              <span className="ri-openai-line text-xl mr-2"></span>
-              <span className="tracking-wide">Search</span>
+              {showAiSearch? 
+                <>
+                 <span className="ri-home-9-line text-xl mr-2"></span>
+                 <span className="tracking-wide">Home</span>
+                </>
+                :
+                <>
+                  <span className="ri-openai-line text-xl mr-2"></span>
+                  <span className="tracking-wide">Search</span>
+                </>
+              }
               </div>
             </div>
             <div className="flex items-center rounded-sm text-white">

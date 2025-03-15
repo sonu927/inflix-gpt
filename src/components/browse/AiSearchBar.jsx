@@ -1,5 +1,5 @@
 import { GoogleGenerativeAI,HarmCategory,HarmBlockThreshold } from '@google/generative-ai';
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { API_OPTIONS, GEMINI_KEY } from '../../utils/constants';
 import { useDispatch } from 'react-redux';
 import { addAiSuggestionMovies } from '../../utils/aiSlice';
@@ -8,8 +8,7 @@ const AiSearchBar = () => {
     const searchText = useRef(null);
     const genAI = new GoogleGenerativeAI(GEMINI_KEY);
     const dispatch = useDispatch();
-    const speechSupported = ("SpeechRecognition" in window || "webkitSpeechRecognition" in window);
-    const [isListening,setIsListening] = useState(false);
+
     const model = genAI.getGenerativeModel({
         model: "gemini-1.5-flash",
     });
@@ -27,36 +26,7 @@ const AiSearchBar = () => {
         searchText.current.value = value;
     } 
 
-    const startSpeechRecognition = () => {
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        const recognition = new SpeechRecognition();
-        
-        recognition.lang = 'en-US';
-        recognition.interimResults = false;
-        recognition.maxAlternatives = 1;
-
-        recognition.onstart = () => {
-            setIsListening(true);
-        }
-
-        recognition.onspeechend = () => {
-            recognition.stop();
-            setIsListening(false)
-        }
-
-        recognition.onresult = (event) => {
-            const transcript = event.results[0][0].transcript;
-            searchText.current.value = transcript;
-        }
-
-        recognition.onerror = (event) => {
-            console.error("Speech recognition error:", event.error);
-            alert("Error with speech recognition: " + event.error);
-            setIsListening(false);
-        }
-
-        recognition.start();
-    }
+    
     const fetchMoviesData = async (movies) => {
         try {
             const moviesRequests = movies.map((movie) => {
@@ -78,31 +48,47 @@ const AiSearchBar = () => {
         }
     }
     const handleAiSearch = async () => {
-        console.log("dkskdls",searchText.current.value);    
+        console.log("dkskdls", searchText.current.value);    
         const userInput = searchText.current.value.trim();
-        if(!userInput) return;
-
+        if (!userInput) return;
+    
         try {
-            const prompt = "Act as a movie recommendation system and suggest some movies for the query :"
-                + userInput +
-                ". Only give me the names of 5 movies, like the example result given ahead. Example Result: Gadar,Koi mil gaya,jism,raaz,beta";
+            const prompt = `Act as a movie recommendation system and suggest some movies for the query: "${userInput}".
+            Only return the names of **exactly** 5 movies, separated by commas.
+            Example: Gadar,Koi mil gaya,Jism,Raaz,Beta.
+            If you cannot provide movie names, **return ONLY the word "error"** (without any explanation or additional text).`;
+    
             const result = await model.generateContent({
-                contents: [{role:'user',parts:[{text: prompt}]}],
+                contents: [{ role: 'user', parts: [{ text: prompt }] }],
                 generationConfig
-            })
-            const responseText = await result.response.text();
-            console.log("djksjdksjskjs",responseText);
-            if(responseText.length > 0){
-                fetchMoviesData(responseText.split(','));
+            });
+    
+            const responseText = (await result.response.text()).trim();
+            console.log("djksjdksjskjs", responseText);
+    
+            // Handle AI errors
+            if (responseText.toLowerCase() === "error") {
+                alert("Sorry, I couldn't find movie recommendations. Please try a different query.");
+                return;
+            }
+    
+            // Process movie list
+            const movies = responseText.split(",").map(movie => movie.trim());
+            if (movies.length === 5) {
+                fetchMoviesData(movies);
+            } else {
+                console.error("Unexpected AI response:", responseText);
+                alert("Sorry, I couldn't find movie recommendations. Please try again.");
             }
         } catch (error) {
-            console.error("Error in gemini api",error)
+            console.error("Error in Gemini API:", error);
+            alert("An error occurred while fetching movie recommendations. Please try again later.");
         }
-
-    }
+    };
+    
     return (
         <div className='py-12 flex justify-center items-center'>
-            <div className='py-6 px-4 bg-[#171717]/95 w-[50%] rounded-lg flex flex-col gap-1 text-white'>
+            <div className='py-6 px-4 bg-custom-dark w-[50%] rounded-lg flex flex-col gap-1 text-white'>
                 <textarea
                 ref={searchText}
                 placeholder="What are you looking for?"
@@ -110,11 +96,6 @@ const AiSearchBar = () => {
                 onChange={handleOnChange}
                 />
                 <div className='flex justify-end gap-6'>
-                    {speechSupported && 
-                        <button className='bg-white rounded-full p-2 cursor-pointer hover:bg-gray-200' onClick={startSpeechRecognition}>
-                            <span className={`ri-mic-ai-line text-2xl ${isListening ? "text-red-500" : "text-black"} leading-none`}></span>
-                        </button>
-                    }
                     <button className='bg-white rounded-full p-2 cursor-pointer hover:bg-gray-200' onClick={handleAiSearch}>
                         <span className='ri-search-2-line text-2xl text-black leading-none'></span>
                     </button>
