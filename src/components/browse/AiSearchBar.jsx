@@ -4,7 +4,7 @@ import { API_OPTIONS, GEMINI_KEY } from '../../utils/constants';
 import { useDispatch } from 'react-redux';
 import { addAiSuggestionMovies } from '../../utils/aiSlice';
 
-const AiSearchBar = () => {
+const AiSearchBar = ({setLoading}) => {
     const searchText = useRef(null);
     const genAI = new GoogleGenerativeAI(GEMINI_KEY);
     const dispatch = useDispatch();
@@ -51,7 +51,7 @@ const AiSearchBar = () => {
         console.log("dkskdls", searchText.current.value);    
         const userInput = searchText.current.value.trim();
         if (!userInput) return;
-    
+        setLoading(true);
         try {
             const prompt = `Act as a movie recommendation system and suggest some movies for the query: "${userInput}".
             Only return the names of **exactly** 5 movies, separated by commas.
@@ -80,6 +80,7 @@ const AiSearchBar = () => {
                 console.error("Unexpected AI response:", responseText);
                 alert("Sorry, I couldn't find movie recommendations. Please try again.");
             }
+            setLoading(false);
         } catch (error) {
             console.error("Error in Gemini API:", error);
             alert("An error occurred while fetching movie recommendations. Please try again later.");
